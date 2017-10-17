@@ -30,12 +30,13 @@ gcd_ first second =
             then gcd_ (first - second) second
             else gcd_ (second - first) first
 
+-- including borders
 squareExists :: Integer -> Integer -> Bool
 squareExists first second = 
     let l = if first < second then first else second in
     let r = if first < second then second else first in
     if r < 1 then False else
-    if l < 1 then True else
-    if  ceiling (sqrt (fromIntegral l)) ^ 2 <= r then True else False
+    if l < 1 then True else 
+        ceiling (sqrt (fromIntegral l)) ^ 2 <= r
     
     
