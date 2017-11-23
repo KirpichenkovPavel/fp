@@ -68,11 +68,32 @@ instance Integral WeirdPeanoNumber where
     toInteger (Succ a) = toInteger (toInteger a + 1)
     toInteger (Pred a) = toInteger (toInteger a - 1)
 
-    quotRem num den = 
-        let quotInt n d = quot (toInteger n) (toInteger d) in
-        let remInt n d = rem (toInteger n) (toInteger d) in
-        (fromInteger $ quotInt num den , fromInteger $ remInt num den)
-    
+    -- quotRem num den = 
+    --     let quotInt n d = quot (toInteger n) (toInteger d) in
+    --     let remInt n d = rem (toInteger n) (toInteger d) in
+    --     (fromInteger $ quotInt num den , fromInteger $ remInt num den)
+    quotRem num den =
+        move num den Zero Zero
+        where 
+            move n Zero q r = error "Division by zero"
+            move Zero d q r = (q, r)
+            move (Succ n) (Succ d) q r =
+                if d == r
+                    then move n (Succ d) (Succ q) Zero
+                    else move n (Succ d) q (Succ r)
+            move (Succ n) (Pred d) q r =
+                if d + r == Zero
+                    then move n (Pred d) (Pred q) Zero
+                    else move n (Pred d) q (Succ r)
+            move (Pred n) (Succ d) q r =
+                if d + r == Zero
+                    then move n (Succ d) (Pred q) Zero
+                    else move n (Succ d) q (Pred r)
+            move (Pred n) (Pred d) q r =
+                if d == r
+                    then move n (Pred d) (Succ q) Zero
+                    else move n (Pred d) q (Pred r)
+
 instance Show WeirdPeanoNumber where
     show a = show (toInteger a) ++ "p"
 
